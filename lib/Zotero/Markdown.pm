@@ -1,8 +1,8 @@
 package Zotero::Markdown;
-
+use 5.010;
 use Moo;
-use MozRepl;
 
+use MozRepl;
 
 =head1 NAME
 
