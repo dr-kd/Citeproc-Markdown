@@ -42,12 +42,30 @@ sub parse_citation {
 has citation_regex => ( is => 'ro',
                         default => sub {
                             qr/\(c\|               # preamble
-                               (?<author>.*?)\s+  # author
-                               (?<year>\d+)\s+    # year
-                               (?<title>.*?)\)/x; # title fragment
+                                (?<author>.*?)\s+  # author
+                                (?<year>\d+)\s+    # year
+                                (?<title>.*?)\)/x; # title fragment
                         });
 
 
+
+sub search {
+    my ($self, $cite) = @_;
+    my %c = %{$self->parse_citation($cite)};
+    # TODO - check search is done from "my library" not a collection.
+    $self->_run("var search = new zotero.Search();");
+    # title contains $c->{title}
+    $self->_run(qq/search.addCondition("title", "contains", "$c{title}")/);
+    # creator contains $c->{author}
+    $self->_run(qq/search.addCondition("creator", "contains", "$c{author}")/);
+    # date contains $c->{year}
+    $self->_run(qq/search.addCondition("date", "is", "$c{year}")/);
+    $self->_run('var result = search.search()');
+    my $results = $self->_run('result.length');
+    warn "More than one result returned for $cite.  Using the first one.\n"
+        if $results > 1;
+    return $self->_run("result[0]");
+}
 
 1;
 
@@ -86,7 +104,8 @@ MozRepl object for internal use
 
 =head2 _run
 
-sends javascript commands to the repl and returns the result.
+sends javascript commands to the repl and returns the result of the last
+command.
 
 =head2 parse_citation
 
