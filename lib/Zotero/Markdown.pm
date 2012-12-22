@@ -3,15 +3,17 @@ use 5.010;
 use Moo;
 
 use MozRepl;
+use JSON::Any;
 
 has citations => (is => 'ro', default => sub {{}} );
-
 
 has repl => (is => 'ro', lazy => 1, builder     => '_build_repl',);
 
 sub _build_repl {
     my $repl = MozRepl->new();
-    $repl->setup;
+    $repl->setup({# zotero can be slow.
+        client  => {extra_client_args => {timeout => 100000} },
+    } );
     my $zotero = 'var zotero = Components.classes["@zotero.org/Zotero;1"] .getService(Components.interfaces.nsISupports).wrappedJSObject;';
     $repl->execute($zotero);
     return $repl;
@@ -19,7 +21,9 @@ sub _build_repl {
 
 sub _run {
     my ($self, @commands) = @_;
-    $self->repl->execute($_) for @commands;
+    my $result;
+    $result = $self->repl->execute($_) for @commands;
+    return $result;
 }
 
 sub parse_citation {
