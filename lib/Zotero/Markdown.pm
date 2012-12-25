@@ -29,9 +29,11 @@ has js_dir => (is => 'ro', default => sub {
 
 sub _build_repl {
     my $repl = MozRepl->new();
+    $repl->setup_log([qw/error fatal/]) unless $ENV{DEBUG};
     $repl->setup({# zotero can be slow.
         client  => {extra_client_args => {timeout => 6000} },
     } );
+
     return $repl;
 }
 
@@ -160,7 +162,9 @@ citation text provided by the user.  Used to memoize
 
 =head2 repl
 
-MozRepl object for internal use
+MozRepl object for internal use.  Run script with env var DEBUG=1 for
+verbose info, otherwise only warnings and fatals are emitted.  DEBUG=1 will
+also catch JSON encoding problems.
 
 =head2 run
 
