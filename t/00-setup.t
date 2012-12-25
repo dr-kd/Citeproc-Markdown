@@ -23,5 +23,5 @@ diag Dump $z->available_styles;
 ok ($z->set_style('Modern Language Association'),
     'set style to one that exists'); # die on fail
 # I prefer 'Oryx compact (dev)'
-
+diag Dump $z->run("csl_util_encode(mySys.retrieveItem($item_id))");
 done_testing;
