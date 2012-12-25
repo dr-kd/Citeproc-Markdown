@@ -104,6 +104,7 @@ function instantiateCiteProc (styleid) {
 
 /**
  * Wrapper for citeproc updateItems.
+ * Takes an array of numeric item IDs.
  */
 function updateItems (ids) {
     zotero.reStructuredCSL.updateItems(ids);
