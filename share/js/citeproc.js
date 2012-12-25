@@ -133,11 +133,12 @@ function appendCitationCluster (citation) {
 
 /**
  * Wrapper for citeproc makeBibliography.
+ * call after running updateItems.  Returns the bibliography.
  */
 function makeBibliography (arg) {
     var bib = zotero.reStructuredCSL.makeBibliography(arg);
     if (bib) {
-        return cls_util_encode(bib);
+        return csl_util_encode(bib);
     } else {
         return "";
     }
@@ -162,7 +163,7 @@ function isInTextStyle() {
 };
 
 function getItemIdDynamicBatch(data) {
-    return cls_util_encode(data.map(getItemIdDynamic));
+    return csl_util_encode(data.map(getItemIdDynamic));
 }
 
 function getItemIdDynamic(data) {
