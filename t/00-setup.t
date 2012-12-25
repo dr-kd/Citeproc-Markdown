@@ -16,7 +16,7 @@ binmode $builder->todo_output,    ":utf8";
 
 
 my $z = Zotero::Markdown->new(js_dir =>
-                         Path::Class::Dir->new("$Bin/../share/js"));
+                         Path::Class::Dir->new("$Bin/../share/"));
 
 ok($z->repl->isa('MozRepl'), "repl object created ok");
 my @egs = ( '(c|Law 2008 On sociology)',
