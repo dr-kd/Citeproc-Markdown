@@ -96,7 +96,10 @@ sub search {
     return $self->run("result[0]");
 }
 
-sub get_available_styles {
+has available_styles => ( is => 'ro', lazy => 1,
+                       builder => '_build_available_styles');
+
+sub _build_available_styles {
     my ($self) = @_;
     my $js = '
         var styles = zotero.Styles.getVisible();

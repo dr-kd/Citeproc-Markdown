@@ -19,6 +19,6 @@ is_deeply($res, {
         }, "corect citation parse");
 my $item_id = $z->search($eg);
 ok($item_id);
-diag Dump $z->get_available_styles();
+diag Dump $z->available_styles;
 
 done_testing;
