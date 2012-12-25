@@ -108,7 +108,11 @@ sub get_available_styles {
         ';
 
     my $styles = $self->run($js);
-    return $styles;
+    my %styles;
+    foreach my $s (@$styles) {
+        $styles{$s->{name}} = $s->{id};
+    }
+    return \%styles;
 }
 
 

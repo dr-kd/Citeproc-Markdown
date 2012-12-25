@@ -5,6 +5,7 @@ use Test::More;
 use Zotero::Markdown;
 use FindBin qw/$Bin/;
 use Path::Class;
+use YAML;
 
 my $z = Zotero::Markdown->new(js_dir =>
                          Path::Class::Dir->new("$Bin/../share/js"));
@@ -18,5 +19,6 @@ is_deeply($res, {
         }, "corect citation parse");
 my $item_id = $z->search($eg);
 ok($item_id);
-diag $z->get_available_styles();
+diag Dump $z->get_available_styles();
+
 done_testing;
