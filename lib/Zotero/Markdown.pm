@@ -44,6 +44,14 @@ sub run {
         };
 }
 
+sub run_file {
+    my ($self, $filename) = @_;
+    local $/="\n\n"; # adjust input record sep;
+    # to split into code paragraphs in an attempt to keep mozrepl happy
+    my @code = $self->js_dir->file($filename)->slurp;
+    return $self->run(@code);
+}
+
 sub parse_citation {
     my ($self, $cite ) = @_;
     return $self->citations->{$cite}
@@ -141,6 +149,13 @@ MozRepl object for internal use
 
 sends javascript commands to the repl and returns the result of the last
 command.
+
+=head2 run_file
+
+Reads in javascript source code, and sends it to the repl paragraph by
+paragraph(delimited by \n\n).  WARNING - be sure to ensure that each
+paragraph compiles as a standalone entity.  If not the repl will hang then
+time out.
 
 =head2 parse_citation
 
