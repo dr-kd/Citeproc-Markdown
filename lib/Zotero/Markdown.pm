@@ -8,6 +8,11 @@ use Path::Class;
 use File::ShareDir;
 use Try::Tiny;
 
+# load javascript required for citation management
+sub BUILD {
+    my ($self) = @_;
+    $self->run_file('citeproc.js');
+}
 
 has citations => (is => 'ro', default => sub {{}} );
 
@@ -26,8 +31,6 @@ sub _build_repl {
     $repl->setup({# zotero can be slow.
         client  => {extra_client_args => {timeout => 6000} },
     } );
-    my $zotero = 'var zotero = Components.classes["@zotero.org/Zotero;1"] .getService(Components.interfaces.nsISupports).wrappedJSObject;';
-    $repl->execute($zotero);
     return $repl;
 }
 
@@ -167,5 +170,3 @@ Simple regex for parsing the text string.
 TODO.  consider making a proper parser.
 TODO.  consider optional doi support.
 
-
- 
