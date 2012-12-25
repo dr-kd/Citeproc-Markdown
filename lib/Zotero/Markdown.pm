@@ -6,9 +6,12 @@ use MozRepl;
 use JSON::Any;
 use Path::Class;
 use File::ShareDir;
+use Try::Tiny;
 
 
 has citations => (is => 'ro', default => sub {{}} );
+
+has json_encoder => ( is => 'ro', default => sub { JSON::Any->new } );
 
 has repl => (is => 'ro', lazy => 1, builder     => '_build_repl',);
 
@@ -28,11 +31,17 @@ sub _build_repl {
     return $repl;
 }
 
-sub _run {
+sub run {
     my ($self, @commands) = @_;
     my $result;
     $result = $self->repl->execute($_) for @commands;
-    return $result;
+    $result =~ s/^"|"$//g;
+    try {
+        my $obj = 
+            return $self->json_encoder->jsonToObj($result)
+        } catch {
+            return $result;
+        };
 }
 
 sub parse_citation {
