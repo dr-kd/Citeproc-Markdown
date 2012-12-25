@@ -73,18 +73,15 @@ sub parse_citation {
 
 has citation_regex => ( is => 'ro',
                         default => sub {
-                            qr/\(c\|               # preamble
-                                (?<author>.*?)\s+  # author
-                                (?<year>\d+)\s+    # year
-                                (?<title>.*?)\)/x; # title fragment
+                            qr/\((?<suppress>c|c)\| # suppress author if 's'
+                                (?<author>.*?)\s+   # author
+                                (?<year>\d+)\s+     # year
+                                (?<title>.*?)\)/x;  # title fragment
                         });
-
-
 
 sub search {
     my ($self, $cite) = @_;
     my %c = %{$self->parse_citation($cite)};
-    $DB::single=1;
     my $cite_data =
         $self->json_encoder->objToJson([@c{qw/author title year/}]);
     my $results = $self->run("getItemIdDynamic($cite_data)");
