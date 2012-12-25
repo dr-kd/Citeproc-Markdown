@@ -19,18 +19,31 @@ my $z = Zotero::Markdown->new(js_dir =>
                          Path::Class::Dir->new("$Bin/../share/js"));
 
 ok($z->repl->isa('MozRepl'), "repl object created ok");
-my $eg = "(c|Law 2008 On sociology)";
-my $res = $z->parse_citation($eg);
-is_deeply($res, {
-          'title' => 'On sociology',
-          'author' => 'Law',
-          'year' => '2008'
-        }, "corect citation parse");
-my $item_id = $z->search($eg);
-ok($item_id);
-diag Dump $z->available_styles;
-ok ($z->set_style('Modern Language Association'),
+my @egs = ( '(c|Law 2008 On sociology)',
+            '(c|Greenhalgh 2005 Diffusion)',
+            '(c|Anonymous 2005 strives)',
+            '(c|Anonymous 2005 stitching)',
+            '(c|Dooley 1999 process)(c|Dooley 2003 modeling)',
+        );
+
+ok ($z->set_style('Chicago Manual of Style (author-date)'),
     'set style to one that exists'); # die on fail
-# I prefer 'Oryx compact (dev)'
-diag Dump $z->run("csl_util_encode(mySys.retrieveItem($item_id))");
+
+my $tested_parse;
+my @citation_ids;
+foreach my $eg (@egs) {
+    my $res = $z->parse_citation($eg);
+    is_deeply($res, {
+        'title' => 'On sociology',
+        'author' => 'Law',
+        'year' => '2008'
+    }, "corect citation parse") unless $tested_parse;
+    $tested_parse = 1;
+    my @cite_group = $z->extract_citation_list($eg);
+    $z->add_citation(@cite_group);
+}
+
+my $bib = $z->make_bibliography();
+diag Dump $bib;
+
 done_testing;
