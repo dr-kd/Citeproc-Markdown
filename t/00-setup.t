@@ -7,8 +7,17 @@ use FindBin qw/$Bin/;
 use Path::Class;
 use YAML;
 
+# boilerplate for Test::Builder
+use utf8;
+my $builder = Test::More->builder;
+binmode $builder->output,         ":utf8";
+binmode $builder->failure_output, ":utf8";
+binmode $builder->todo_output,    ":utf8";
+
+
 my $z = Zotero::Markdown->new(js_dir =>
                          Path::Class::Dir->new("$Bin/../share/js"));
+
 ok($z->repl->isa('MozRepl'), "repl object created ok");
 my $eg = "(c|Law 2008 On sociology)";
 my $res = $z->parse_citation($eg);
