@@ -40,7 +40,7 @@ function escapeStringValues (o) {
 /**
  * Encode a string for passing back via the gateway.
  */
-function encode(what) {
+function csl_util_encode(what) {
     return JSON.stringify(escapeStringValues(what));
 }
 
@@ -48,7 +48,7 @@ function encode(what) {
  * Return an array of item IDs for an array of keys.
  */
 function getItemIdRawBatch (keys) {
-    return encode(keys.map(getItemIdRaw));
+    return csl_util_encode(keys.map(getItemIdRaw));
 }
 
 /**
@@ -113,7 +113,7 @@ function updateItems (ids) {
  * Batch appendCitationCluster.
  */
 function appendCitationClusterBatch (citations) {
-    return encode(citations.map(appendCitationCluster));
+    return csl_util_encode(citations.map(appendCitationCluster));
 }
 
 /**
@@ -137,7 +137,7 @@ function appendCitationCluster (citation) {
 function makeBibliography (arg) {
     var bib = zotero.reStructuredCSL.makeBibliography(arg);
     if (bib) {
-        return encode(bib);
+        return cls_util_encode(bib);
     } else {
         return "";
     }
@@ -162,7 +162,7 @@ function isInTextStyle() {
 };
 
 function getItemIdDynamicBatch(data) {
-    return encode(data.map(getItemIdDynamic));
+    return cls_util_encode(data.map(getItemIdDynamic));
 }
 
 function getItemIdDynamic(data) {
