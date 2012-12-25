@@ -98,6 +98,7 @@ function instantiateCiteProc (styleid) {
     }
     zotero.localItems = {};
     zotero.reStructuredCSL.setOutputFormat("html");
+    return styleid;
 };
 
 
