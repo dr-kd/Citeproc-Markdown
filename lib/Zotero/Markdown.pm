@@ -1,4 +1,6 @@
 package Zotero::Markdown;
+use warnings;
+use strict;
 use 5.010;
 use Moo;
 
@@ -192,6 +194,34 @@ Examples of the format are
 You can put perl regex elements into the title portion.  e.g. ^, $,
 .*
 
+=head2 BUILD
+
+load javascript required for citation management
+
+=cut
+
+=head2 json_encoder
+
+JSON::Any object used in data transfer between repl and perl
+
+=cut
+
+=head2 js_dir
+
+sharedir where we keep the javascript required for mozrepl
+
+=cut
+
+=head2 add_citation
+
+takes a list of citation ids, and adds them to the csl processor through
+the repl.
+
+=head2 search
+
+Takes a citation string, parses it returns the item id.  Warns if > 1
+result is returned.
+
 =head2 citations
 
 hashref of citations seen during document processing, keyed by the
@@ -237,3 +267,8 @@ Uses instantiateCiteProc in citeproc.js to set the current style.
 =head2 extract_citation_list
 
 Takes a list of cites (c|Whatever 1999 Title fragment)(c|Someone 2002 Stuff) etc and splits into an array for further processing.
+
+=head2 make_bibliography
+
+Create the bibliography after all citations have been processed.
+
