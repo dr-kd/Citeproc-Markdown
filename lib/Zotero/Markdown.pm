@@ -41,9 +41,9 @@ sub run {
     $result = $self->repl->execute($_) for @commands;
     $result =~ s/^"|"$//g;
     try {
-        my $obj = 
-            return $self->json_encoder->jsonToObj($result)
+        return $self->json_encoder->jsonToObj($result)
         } catch {
+            warn "JSON ERROR: '$_'" if $ENV{DEBUG};
             return $result;
         };
 }
