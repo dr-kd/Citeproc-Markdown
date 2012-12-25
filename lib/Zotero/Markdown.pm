@@ -4,10 +4,19 @@ use Moo;
 
 use MozRepl;
 use JSON::Any;
+use Path::Class;
+use File::ShareDir;
+
 
 has citations => (is => 'ro', default => sub {{}} );
 
 has repl => (is => 'ro', lazy => 1, builder     => '_build_repl',);
+
+has js_dir => (is => 'ro', default => sub {
+                   return Path::Class::Dir
+                       ->new(File::ShareDir::module_dir(__PACKAGE__))
+                           ->subdir('js');
+               } );
 
 sub _build_repl {
     my $repl = MozRepl->new();

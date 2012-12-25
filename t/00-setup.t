@@ -3,8 +3,11 @@ use warnings;
 use strict;
 use Test::More;
 use Zotero::Markdown;
+use FindBin qw/$Bin/;
+use Path::Class;
 
-my $z = Zotero::Markdown->new;
+my $z = Zotero::Markdown->new(js_dir =>
+                         Path::Class::Dir->new("$Bin/../share/js"));
 ok($z->repl->isa('MozRepl'), "repl object created ok");
 my $eg = "(c|Law 2008 On sociology)";
 my $res = $z->parse_citation($eg);
