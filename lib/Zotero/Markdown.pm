@@ -8,6 +8,7 @@ use Path::Class;
 use File::ShareDir;
 use Try::Tiny;
 use URI;
+use URI::Escape::JavaScript qw/unescape/;
 
 # load javascript required for citation management
 sub BUILD {
@@ -122,10 +123,49 @@ sub set_style {
         unless exists $self->available_styles->{$style};
     my $uri = URI->new($self->available_styles->{$style});
     my $id = ($uri->path_segments)[-1];
+    # clears the bibliography and sets the style for the current bib.
     my $result = $self->run("instantiateCiteProc('$id')");
     return $result;
 }
 
+sub add_citation {
+    my ($self, @refs) = @_;
+    my @cites;
+    my @cite_ids;
+    foreach my $r (@refs) {
+        my $res = $self->parse_citation($r);
+        my $id = $self->search($r);
+        push @cite_ids, $id;
+        push @cites, { id => $id };
+    }
+
+    $self->run("updateItems("
+                   . $self->json_encoder->objToJson(\@cite_ids)
+                   . ")");
+
+    my $cc = $self->json_encoder->objToJson(
+        { citationItems => \@cites,
+          properties     => { noteIndex => 1}
+      });
+    return $self->run("appendCitationCluster($cc)");
+}
+
+sub extract_citation_list {
+    my ($self, $cite_str) = @_;
+    my $regex = $self->citation_regex;
+    my (@cites) = $cite_str =~ /(\([cs]\|.*?\))/g;
+    return @cites;
+}
+
+sub make_bibliography {
+    my ($self) = @_;
+    my $bib = $self->run('makeBibliography()');
+    foreach (@{$bib->[1]}) {
+        $_ = unescape($_);
+        $_ =~ s/(<\/div>)/$1<br \/>/s;
+    }
+        return $bib;
+}
 
 1;
 __END__
@@ -194,3 +234,6 @@ name val: url.
 
 Uses instantiateCiteProc in citeproc.js to set the current style.
 
+=head2 extract_citation_list
+
+Takes a list of cites (c|Whatever 1999 Title fragment)(c|Someone 2002 Stuff) etc and splits into an array for further processing.
