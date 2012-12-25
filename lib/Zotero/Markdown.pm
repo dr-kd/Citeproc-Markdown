@@ -7,6 +7,7 @@ use JSON::Any;
 use Path::Class;
 use File::ShareDir;
 use Try::Tiny;
+use URI;
 
 # load javascript required for citation management
 sub BUILD {
@@ -118,7 +119,15 @@ sub _build_available_styles {
     return \%styles;
 }
 
-
+sub set_style {
+    my ($self, $style) = @_;
+    die "Style '$style' does not exist\n"
+        unless exists $self->available_styles->{$style};
+    my $uri = URI->new($self->available_styles->{$style});
+    my $id = ($uri->path_segments)[-1];
+    my $result = $self->run("instantiateCiteProc('$id')");
+    return $result;
+}
 
 
 1;
@@ -176,4 +185,13 @@ parses the citation to author title and year hashref
 Simple regex for parsing the text string.
 TODO.  consider making a proper parser.
 TODO.  consider optional doi support.
+
+=head2 available_styles
+
+Lazy accessor for the available zotero styles.  Returns a hashref: key:
+name val: url.
+
+=head2 set_style
+
+Uses instantiateCiteProc in citeproc.js to set the current style.
 

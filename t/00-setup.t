@@ -20,5 +20,8 @@ is_deeply($res, {
 my $item_id = $z->search($eg);
 ok($item_id);
 diag Dump $z->available_styles;
+ok ($z->set_style('Modern Language Association'),
+    'set style to one that exists'); # die on fail
+# I prefer 'Oryx compact (dev)'
 
 done_testing;
