@@ -12,7 +12,7 @@ has repl => (is => 'ro', lazy => 1, builder     => '_build_repl',);
 sub _build_repl {
     my $repl = MozRepl->new();
     $repl->setup({# zotero can be slow.
-        client  => {extra_client_args => {timeout => 100000} },
+        client  => {extra_client_args => {timeout => 6000} },
     } );
     my $zotero = 'var zotero = Components.classes["@zotero.org/Zotero;1"] .getService(Components.interfaces.nsISupports).wrappedJSObject;';
     $repl->execute($zotero);
@@ -67,8 +67,25 @@ sub search {
     return $self->_run("result[0]");
 }
 
-1;
+sub get_available_styles {
+    my ($self) = @_;
+    my $js = '
+        var styles = zotero.Styles.getVisible();
+        var style_info = [];
+        for each ( var s in styles) {
+            style_info.push( { "id" : s.styleID, "name" : s.title } );
+        }
+        JSON.stringify(style_info);
+        ';
 
+    my $styles = $self->_run($js);
+    return $styles;
+}
+
+
+
+
+1;
 __END__
 =head1 NAME
 

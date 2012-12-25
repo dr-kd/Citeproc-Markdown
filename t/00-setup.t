@@ -5,7 +5,6 @@ use Test::More;
 use Zotero::Markdown;
 
 my $z = Zotero::Markdown->new;
-$z->setup();
 ok($z->repl->isa('MozRepl'), "repl object created ok");
 my $eg = "(c|Law 2008 On sociology)";
 my $res = $z->parse_citation($eg);
