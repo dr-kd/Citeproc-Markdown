@@ -82,19 +82,17 @@ has citation_regex => ( is => 'ro',
 sub search {
     my ($self, $cite) = @_;
     my %c = %{$self->parse_citation($cite)};
-    # TODO - check search is done from "my library" not a collection.
-    $self->run("var search = new zotero.Search();");
-    # title contains $c->{title}
-    $self->run(qq/search.addCondition("title", "contains", "$c{title}")/);
-    # creator contains $c->{author}
-    $self->run(qq/search.addCondition("creator", "contains", "$c{author}")/);
-    # date contains $c->{year}
-    $self->run(qq/search.addCondition("date", "is", "$c{year}")/);
-    $self->run('var result = search.search()');
-    my $results = $self->run('result.length');
-    warn "More than one result returned for $cite.  Using the first one.\n"
-        if $results > 1;
-    return $self->run("result[0]");
+    $DB::single=1;
+    my $cite_data =
+        $self->json_encoder->objToJson([@c{qw/author title year/}]);
+    my $results = $self->run("getItemIdDynamic($cite_data)");
+    if (ref($results)) {
+        warn "More than one result returned for $cite.  Using the first one.\n";
+        return $results->[0];
+    }
+    else {
+        return $results
+    }
 }
 
 has available_styles => ( is => 'ro', lazy => 1,
