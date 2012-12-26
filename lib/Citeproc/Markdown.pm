@@ -191,8 +191,8 @@ Designed to be good enough for common use cases, not perfect.  Code is also a go
 =head2 SYNOPSIS
 
 Will scan a plain text document paragraph by paragraph for citations using
-a human readable format to key citations.  Conversion will die without
-modifying the document if there are ambiguous citation keys.
+a human readable format to key citations.  Conversion will warn if there
+are ambiguous citation keys (maybe it should die, not sure).
 
 Requires mozrepl
 (L<https://addons.mozilla.org/en-us/firefox/addon/mozrepl/>) installed and
