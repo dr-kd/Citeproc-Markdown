@@ -69,7 +69,7 @@ sub parse_citation {
     $cite =~ /$rx/;
     my %parse;
     @parse{qw/author title year/} = @+{qw/author title year/};
-    $self->citations->{$cite} = \%parse;
+    $self->citations->{$cite} = { %parse };
     return $self->citations->{$cite};
 }
 
@@ -149,7 +149,8 @@ sub add_citation {
         { citationItems => \@cites,
           properties     => { noteIndex => 1}
       });
-    return $self->run("appendCitationCluster($cc)");
+    my $cite_key =  $self->run("appendCitationCluster($cc)");
+    return $cite_key;
 }
 
 sub extract_citation_list {
@@ -167,6 +168,13 @@ sub make_bibliography {
         $_ =~ s/(<\/div>)/$1<br \/>/s;
     }
         return $bib;
+}
+
+sub process_citation {
+    my ($self, $cite_str) = @_;
+    my @cites = $self->extract_citation_list($cite_str);
+    $self->citations->{$cite_str} =
+        { final_cite => $self->add_citation(@cites)};
 }
 
 1;

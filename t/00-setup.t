@@ -39,10 +39,10 @@ foreach my $eg (@egs) {
         'year' => '2008'
     }, "corect citation parse") unless $tested_parse;
     $tested_parse = 1;
-    my @cite_group = $z->extract_citation_list($eg);
-    $z->add_citation(@cite_group);
+    $z->process_citation($eg);
 }
 
+diag Dump $z->citations;
 my $bib = $z->make_bibliography();
 diag Dump $bib;
 
