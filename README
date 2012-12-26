@@ -1,0 +1,115 @@
+NAME
+    Citeproc::Markdown
+
+  DESCRIPTION
+    Package for handling human readable Author/Date citations in markdown
+    format. Designed to be good enough for common use cases, not perfect.
+    Code is also a good start to a more general Zotero/Perl gateway.
+
+  SYNOPSIS
+    Will scan a plain text document paragraph by paragraph for citations
+    using a human readable format to key citations. Conversion will die
+    without modifying the document if there are ambiguous citation keys.
+
+    Requires mozrepl
+    (<https://addons.mozilla.org/en-us/firefox/addon/mozrepl/>) installed
+    and running to the same Firefox, or XULRunner that your Zotero library
+    is stored in. Other than that, and a working modern perl ( >= 5.10.0) no
+    other extensions, firefox or otherwise are required.
+
+    Examples of the format are
+
+     (c|Fletcher 2003 Mapping stakeholder perceptions)
+     (c|Law 2008 On sociology)
+     (s|Law 2008 On sociology)
+
+    The final example is to supress author (not yet implemented, but
+    supported in the regex). The code will warn if more than one keys are
+    found (maybe it should die ...)
+
+  TODO
+    1. Tests work on my local machine but not elsewhere due to citation
+    library differences and zotero setup. 2. Tests only work with a running
+    zotero and mozrepl. 3. Need to write the pandoc integration (need to
+    write some markdown with citations). 4. Supress author citations not yet
+    supported (but stubbed (s| form of citation to support this at a later
+    stage. 5. Consider adding compatible zot4rst citation keys.
+
+    However, this module provides the basis for having decent
+    markdown/zotero integration without the need for intermediate files. In
+    the final implementation I suppose there will be two different versions
+    of the script run "markdown_cite --draft" that will keep the author cite
+    keys untouched, and dump the references to a file, and "markdown_cite
+    --final" that will replace them with the final CSL generated citations.
+
+  BUILD
+    Loads the citeproc javascript required for this code to work.
+
+  json_encoder
+    JSON::Any object used in data transfer between repl and perl
+
+  js_dir
+    sharedir where we keep the javascript required for mozrepl
+
+  add_citation
+    takes a list of citation ids, and adds them to the csl processor through
+    the repl.
+
+  search
+    Takes a citation string, parses it returns the item id. Warns if > 1
+    result is returned.
+
+  citations
+    hashref of citations seen during document processing, keyed by the
+    citation text provided by the user. Used to store citations for
+    publication indexed by writer's citation keys.
+
+  repl
+    MozRepl object for internal use. Run script with env var DEBUG=1 for
+    verbose info, otherwise only warnings and fatals are emitted. DEBUG=1
+    will also catch JSON encoding problems.
+
+  run
+    sends javascript commands to the repl and returns the result of the last
+    command.
+
+  run_file
+    Reads in javascript source code, and sends it to the repl paragraph by
+    paragraph(delimited by \n\n). WARNING - be sure to ensure that each
+    paragraph compiles as a standalone entity. If not the repl will hang
+    then time out.
+
+  parse_citation
+    parses the citation to author title and year hashref
+
+  citation_regex
+    Simple regex for parsing the text string. TODO. consider making a proper
+    parser. TODO. consider optional doi support.
+
+  available_styles
+    Lazy accessor for the available zotero styles. Returns a hashref: key:
+    name val: url.
+
+  set_style
+    Uses instantiateCiteProc in citeproc.js to set the current style.
+
+  extract_citation_list
+    Takes a list of cites (c|Whatever 1999 Title fragment)(c|Someone 2002
+    Stuff) etc and splits into an array for further processing.
+
+  make_bibliography
+    Create the bibliography after all citations have been processed.
+
+  process_citation
+    Given an in-text citation (could be one or more ([cs]| ... form
+    citations, append the final_cite key to its hashref to give the in final
+    (publisher) citation for that chunk of text.
+
+  ACKNOWLEDGEMENTS
+    Erik Hetzner for the javascript code in zot4rst, which is also used in
+    this project (with very minor documentation and naming changes).
+
+    Frank Bennett for the very useful citeproc documentation
+    <http://gsl-nagoya-u.net/http/pub/citeproc-doc.html>, which with Erik's
+    code enabled me get something that was usable running.
+
