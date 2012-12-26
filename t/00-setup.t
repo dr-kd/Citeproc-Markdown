@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use Test::More;
-use Zotero::Markdown;
+use Citeproc::Markdown;
 use FindBin qw/$Bin/;
 use Path::Class;
 use YAML;
@@ -15,7 +15,7 @@ binmode $builder->failure_output, ":utf8";
 binmode $builder->todo_output,    ":utf8";
 
 
-my $z = Zotero::Markdown->new(js_dir =>
+my $z = Citeproc::Markdown->new(js_dir =>
                          Path::Class::Dir->new("$Bin/../share/"));
 
 ok($z->repl->isa('MozRepl'), "repl object created ok");

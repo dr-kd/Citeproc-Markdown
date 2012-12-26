@@ -1,4 +1,4 @@
-package Zotero::Markdown;
+package Citeproc::Markdown;
 use warnings;
 use strict;
 use 5.010;
@@ -33,7 +33,7 @@ has js_dir => (is => 'ro', default => sub {
 sub _build_repl {
     my $repl = MozRepl->new();
     $repl->setup_log([qw/error fatal/]) unless $ENV{DEBUG};
-    $repl->setup({# zotero can be slow.
+    $repl->setup({
         client  => {extra_client_args => {timeout => 6000} },
     } );
 
@@ -181,7 +181,7 @@ sub process_citation {
 __END__
 =head1 NAME
 
-Zotero::Markdown
+Citeproc::Markdown
 
 =head2 DESCRIPTION
 
@@ -318,3 +318,4 @@ project (with very minor documentation and naming changes).
 Frank Bennett for the very useful citeproc documentation
 L<http://gsl-nagoya-u.net/http/pub/citeproc-doc.html>, which with Erik's
 code enabled me get something that was usable running.
+
