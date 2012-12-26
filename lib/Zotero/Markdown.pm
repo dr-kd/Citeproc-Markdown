@@ -186,7 +186,7 @@ Zotero::Markdown
 =head2 DESCRIPTION
 
 Package for handling human readable Author/Date citations in markdown format.
-Designed to be good enough for common use cases, not perfect.
+Designed to be good enough for common use cases, not perfect.  Code is also a good start to a more general Zotero/Perl gateway.
 
 =head2 SYNOPSIS
 
@@ -194,17 +194,41 @@ Will scan a plain text document paragraph by paragraph for citations using
 a human readable format to key citations.  Conversion will die without
 modifying the document if there are ambiguous citation keys.
 
+Requires mozrepl
+(L<https://addons.mozilla.org/en-us/firefox/addon/mozrepl/>) installed and
+running to the same Firefox, or XULRunner that your Zotero library is
+stored in.  Other than that, and a working modern perl ( >= 5.10.0) no
+other extensions, firefox or otherwise are required.
+
 Examples of the format are
 
  (c|Fletcher 2003 Mapping stakeholder perceptions)
  (c|Law 2008 On sociology)
+ (s|Law 2008 On sociology)
 
-You can put perl regex elements into the title portion.  e.g. ^, $,
-.*
+The final example is to supress author (not yet implemented, but supported
+in the regex).  The code will warn if more than one keys are found (maybe
+it should die ...)
+
+=head2 TODO
+
+1.  Tests work on my local machine but not elsewhere due to citation library differences and zotero setup.
+2.  Tests only work with a running zotero and mozrepl.
+3.  Need to write the pandoc integration (need to write some markdown with citations).
+4.  Supress author citations not yet supported (but stubbed (s| form of
+citation to support this at a later stage.
+5.  Consider adding compatible zot4rst citation keys.
+
+However, this module provides the basis for having decent markdown/zotero
+integration without the need for intermediate files.  In the final
+implementation I suppose there will be two different versions of the script
+run C<markdown_cite --draft> that will keep the author cite keys untouched,
+and dump the references to a file, and C<markdown_cite --final> that will
+replace them with the final CSL generated citations.
 
 =head2 BUILD
 
-load javascript required for citation management
+Loads the citeproc javascript required for this code to work.
 
 =cut
 
@@ -233,7 +257,7 @@ result is returned.
 =head2 citations
 
 hashref of citations seen during document processing, keyed by the
-citation text provided by the user.  Used to memoize
+citation text provided by the user.  Used to store citations for publication indexed by writer's citation keys.
 
 =head2 repl
 
@@ -280,3 +304,17 @@ Takes a list of cites (c|Whatever 1999 Title fragment)(c|Someone 2002 Stuff) etc
 
 Create the bibliography after all citations have been processed.
 
+=head2 process_citation
+
+Given an in-text citation (could be one or more ([cs]| ... form citations,
+append the final_cite key to its hashref to give the in final (publisher)
+citation for that chunk of text.
+
+=head2 ACKNOWLEDGEMENTS
+
+Erik Hetzner for the javascript code in zot4rst, which is also used in this
+project (with very minor documentation and naming changes).
+
+Frank Bennett for the very useful citeproc documentation
+L<http://gsl-nagoya-u.net/http/pub/citeproc-doc.html>, which with Erik's
+code enabled me get something that was usable running.
